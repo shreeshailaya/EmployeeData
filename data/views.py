@@ -137,7 +137,7 @@ def updateOnPatch(request,emp):
     try:
         instance = Employee.objects.get(name = emp)
     except Employee.DoesNotExist:
-        instance = None
+        return Response({"error": "name is not valid"},status.HTTP_400_BAD_REQUEST)
 
     if 'company' in employee and 'department' in employee and len(employee['company'])!=0 and len(employee['department'])!=0:
         comp_ = Company.objects.get_or_create(name = employee['company'])

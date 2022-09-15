@@ -58,6 +58,9 @@ class GetAllEmployeeTest(TestCase):
         serializer = EmployeeSerializerGet(emp_instance, many=True)
         self.assertEqual(serializer.data, response.data)
     
+    def test_get_all_company_employees_wrong_company(self):
+        response = api_client.get('/api/company-emp/xyz')
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
 
     def test_register_user_all_parameter(self):
@@ -115,8 +118,62 @@ class GetAllEmployeeTest(TestCase):
 
         request = api_client.post('/api/register/', user_data)
         self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_register_company_contain_number(self):
+        user_data = {
+            "name":"shree1234",
+            "company": "com2",
+            "department": "dep1"
+        }
+        request = api_client.post('/api/register/', user_data)
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+    def test_register_department_contain_number(self):
+        user_data = {
+            "name":"shree1234",
+            "company": "com",
+            "department": "dep1"
+        }
+        request = api_client.post('/api/register/', user_data)
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_register_designation_contain_number(self):
+        user_data = {
+            "name":"shreeshail",
+            "company": "com",
+            "department": "dep",
+            "designation": "desf4"
+        }
+        request = api_client.post('/api/register/', user_data)
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_register_userPro_contain_number(self):
+        user_data = {
+            "name":"shreeshail",
+            "company": "com",
+            "department": "dep",
+            "designation": "desf",
+            "userProfile": [
+                "up1"
+            ]
+        }
+        request = api_client.post('/api/register/', user_data)
+        self.assertEqual(request.status_code, status.HTTP_400_BAD_REQUEST)
+    
+    def test_add_designation_contain_number(self):
+        user_data = {
+            "name":"adddesg"
+        }
+        request = api_client.post('/api/designation/', user_data)
+        self.assertEqual(request.status_code, status.HTTP_201_CREATED)
+    
+    def test_patch_name_not_correct(self):
+        patch_data = {
+            "email": "test@g.com"
+        }
+        response = api_client.patch('/api/update-emp/xxx', patch_data, format='json')
 
-
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        
     def test_patch_request_on_email(self):
         patch_data = {
             "email": "test@g.com"
@@ -147,7 +204,7 @@ class GetAllEmployeeTest(TestCase):
         self.assertEqual(request.data['company'], response.company.name)
         self.assertEqual(request.data['department'], response.department.name)
 
-    def test_patch_on_Company_and_department(self):
+    def test_patch_on_company_and_department(self):
         data = {
             "company": "TestCybage",
             "department": "Admin"
@@ -207,5 +264,12 @@ class GetAllEmployeeTest(TestCase):
         self.assertEqual(response.data['id'], None)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
+    def test_delete_wrong(self):
+        response = api_client.delete('/api/delete-emp/xxx')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     
         
+# pytest --html=report.html
+# pytest --cov
+# py.test --cov=data --cov-report=html

@@ -61,7 +61,15 @@ class EmployeeSerializerRegistration(serializers.ModelSerializer):
     company = serializers.SlugRelatedField(queryset=Company.objects.all(), allow_null = True,slug_field='name')
     class Meta:
         model = Employee
-        fields = '__all__'
+        fields = [
+            'name', 
+            'email',
+            'salary',
+            'company',
+            'designation',
+            'department',
+            'userProfile'
+        ]
     
     def create(self,attr):
         #print(attr)
